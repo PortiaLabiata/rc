@@ -53,7 +53,7 @@ fn main() {
             },
         };
 
-        for token in token_stream.tokens() {
+        for token in token_stream.iter() {
             match token {
                 Token::Number(v) => stack.push_back(v.clone()),
                 Token::OpBin(o) => {

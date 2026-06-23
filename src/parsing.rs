@@ -32,8 +32,12 @@ pub struct TokenStream {
 }
 
 impl TokenStream {
-    pub fn tokens(&self) -> &Vec<Token> {
+    pub fn tokens(&self) -> &[Token] {
         &self.tokens
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Token> {
+        self.tokens.iter()
     }
 }
 
