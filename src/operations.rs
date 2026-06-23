@@ -17,11 +17,11 @@ pub enum Number {
 }
 
 impl OpBin {
-    pub fn apply(self, a: Number, b: Number) -> Number {
+    pub fn apply(self, a: Number, b: Number) -> Option<Number> {
         match self {
-            OpBin::Add => a + b,
-            OpBin::Sub => a - b,
-            OpBin::Mul => a * b,
+            OpBin::Add => Some(a + b),
+            OpBin::Sub => Some(a - b),
+            OpBin::Mul => Some(a * b),
             OpBin::Div => a / b,
         }
     }
@@ -83,16 +83,24 @@ impl Mul for Number {
 }
 
 impl Div for Number {
-    type Output = Self;
+    type Output = Option<Self>;
 
-    fn div(self, other: Self) -> Self {
+    fn div(self, other: Self) -> Self::Output {
         use Number::*;
-        match (self, other) {
+        match other {
+            Number::Int(0) => return None,
+            Number::Float(0.0) => return None,
+            _ => (),
+        }
+
+        let res = match (self, other) {
             (Float(a), Float(b)) => Float(a / b),
             (Int(a), Int(b)) => Float((a as f64) / (b as f64)),
             (Float(a), Int(b)) => Float(a * (b as f64)),
             (Int(a), Float(b)) => Float((a as f64) * b),
-        }
+        };
+
+        Some(res)
     }
 }
 
