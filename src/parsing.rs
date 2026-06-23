@@ -6,6 +6,7 @@ use crate::operations::*;
 pub enum Token {
     Number(Number),
     OpBin(OpBin),
+    OpUn(OpUn),
 }
 
 impl From<Number> for Token {
@@ -17,6 +18,12 @@ impl From<Number> for Token {
 impl From<OpBin> for Token {
     fn from(v: OpBin) -> Self {
         Token::OpBin(v)
+    }
+}
+
+impl From<OpUn> for Token {
+    fn from(v: OpUn) -> Self {
+        Token::OpUn(v)
     }
 }
 
@@ -46,6 +53,8 @@ impl FromStr for TokenStream {
                 token = Token::from(Number::Float(v));
             } else if let Ok(v) = substr.parse::<OpBin>() {
                 token = Token::from(v);
+            } else if let Ok(v) = substr.parse::<OpUn>() {
+                token = Token::from(v); 
             } else {
                 return Err(());
             }

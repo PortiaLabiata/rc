@@ -11,6 +11,14 @@ pub enum OpBin {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
+pub enum OpUn {
+    Sin,
+    Cos,
+    Tan,
+    Ctg,
+}
+
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Number {
     Int(i64),
     Float(f64),
@@ -23,6 +31,38 @@ impl OpBin {
             OpBin::Sub => Some(a - b),
             OpBin::Mul => Some(a * b),
             OpBin::Div => a / b,
+        }
+    }
+}
+
+impl OpUn {
+    pub fn apply(self, a: Number) -> Option<Number> {
+        let a = match a {
+            Number::Float(v) => v,
+            Number::Int(v) => v as f64,
+        };
+
+        let v = match self {
+            OpUn::Sin => a.sin(),
+            OpUn::Cos => a.cos(),
+            OpUn::Tan => a.tan(),
+            OpUn::Ctg => 1.0 / a.tan(),
+        };
+
+        Some(Number::Float(v))
+    }
+}
+
+impl FromStr for OpUn {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "sin" => Ok(OpUn::Sin),
+            "cos" => Ok(OpUn::Cos),
+            "tan" => Ok(OpUn::Tan),
+            "ctg" => Ok(OpUn::Ctg),
+            _ => Err(()),
         }
     }
 }

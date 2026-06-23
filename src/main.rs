@@ -13,14 +13,14 @@ fn pop2(stack: &mut VecDeque<Number>) -> Option<(Number, Number)> {
     }
 
     let a = stack
-        .pop_front()
+        .pop_back()
         .unwrap();
 
     let b = stack
-        .pop_front()
+        .pop_back()
         .unwrap();
 
-    Some((a, b))
+    Some((b, a))
 }
 
 fn print_stack(stack: &VecDeque<Number>) {
@@ -39,7 +39,7 @@ fn main() {
         print_stack(&stack);
 
         print!("> ");
-        io::stdout().flush();
+        let _ = io::stdout().flush();
 
         io::stdin()
             .read_line(&mut s)
@@ -73,6 +73,23 @@ fn main() {
                         }
                     }
                 },
+                Token::OpUn(o) => {
+                    let a = match stack.pop_back() {
+                        Some(v) => v,
+                        None => {
+                            eprintln!("Not enough values on stack!");
+                            break;
+                        }
+                    };
+
+                    match o.apply(a) {
+                        Some(v) => stack.push_back(v),
+                        None => {
+                            eprintln!("Invalid operation!");
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
