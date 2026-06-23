@@ -136,8 +136,8 @@ impl Div for Number {
         let res = match (self, other) {
             (Float(a), Float(b)) => Float(a / b),
             (Int(a), Int(b)) => Float((a as f64) / (b as f64)),
-            (Float(a), Int(b)) => Float(a * (b as f64)),
-            (Int(a), Float(b)) => Float((a as f64) * b),
+            (Float(a), Int(b)) => Float(a / (b as f64)),
+            (Int(a), Float(b)) => Float((a as f64) / b),
         };
 
         Some(res)
