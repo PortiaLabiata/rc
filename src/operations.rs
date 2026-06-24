@@ -16,12 +16,18 @@ pub enum OpUn {
     Cos,
     Tan,
     Ctg,
+    Int,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Number {
     Int(i64),
     Float(f64),
+}
+
+fn float_eq(a: f64, b: f64) -> bool {
+    const EPSILON: f64 = 0.000000000001;
+    (a - b).abs() < EPSILON
 }
 
 impl OpBin {
@@ -37,19 +43,28 @@ impl OpBin {
 
 impl OpUn {
     pub fn apply(self, a: Number) -> Option<Number> {
+        use super::Number::*;
+
         let a = match a {
-            Number::Float(v) => v,
-            Number::Int(v) => v as f64,
+            Float(v) => v,
+            Int(v) => v as f64,
         };
 
         let v = match self {
             OpUn::Sin => a.sin(),
             OpUn::Cos => a.cos(),
             OpUn::Tan => a.tan(),
-            OpUn::Ctg => 1.0 / a.tan(),
+            OpUn::Ctg => {
+                let tan =  a.tan();
+                if float_eq(tan, 0.0) {
+                    return None;
+                }
+                1.0 / tan
+            },
+            OpUn::Int => return Some(Number::Int(a as i64)),
         };
 
-        Some(Number::Float(v))
+        Some(Float(v))
     }
 }
 
@@ -62,6 +77,7 @@ impl FromStr for OpUn {
             "cos" => Ok(OpUn::Cos),
             "tan" => Ok(OpUn::Tan),
             "ctg" => Ok(OpUn::Ctg),
+            "int" => Ok(OpUn::Int),
             _ => Err(()),
         }
     }
@@ -148,7 +164,7 @@ impl fmt::Display for Number {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Number::Int(a) => write!(f, "{}", a),
-            Number::Float(a) => write!(f, "{}", a),
+            Number::Float(a) => write!(f, "{}f", a),
         }
     }
 }

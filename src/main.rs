@@ -36,8 +36,6 @@ fn main() {
     loop {
         let mut s = String::new();
 
-        print_stack(&stack);
-
         print!("> ");
         let _ = io::stdout().flush();
 
@@ -47,8 +45,8 @@ fn main() {
 
         let token_stream: parsing::TokenStream = match s.parse() {
             Ok(v) => v,
-            Err(_) => {
-                eprintln!("Invalid input!");
+            Err(e) => {
+                eprintln!("Invalid token: {}!", e);
                 continue;
             },
         };
@@ -92,5 +90,7 @@ fn main() {
                 }
             }
         }
+
+        print_stack(&stack);
     }
 }

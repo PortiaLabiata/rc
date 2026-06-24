@@ -32,17 +32,13 @@ pub struct TokenStream {
 }
 
 impl TokenStream {
-    pub fn tokens(&self) -> &[Token] {
-        &self.tokens
-    }
-
     pub fn iter(&self) -> std::slice::Iter<'_, Token> {
         self.tokens.iter()
     }
 }
 
 impl FromStr for TokenStream {
-    type Err = ();
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s
@@ -60,7 +56,7 @@ impl FromStr for TokenStream {
             } else if let Ok(v) = substr.parse::<OpUn>() {
                 token = Token::from(v); 
             } else {
-                return Err(());
+                return Err(substr.to_string());
             }
             result.push(token);
         }
